@@ -1,5 +1,4 @@
-# Usa una imagen oficial de Python como imagen padre
-FROM python:3.10-slim
+FROM python:3.10
 
 # Establece el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app
@@ -8,10 +7,15 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-# Instala las dependencias del sistema necesarias
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends gcc libpq-dev \
+# Instala las herramientas de compilación y otros paquetes esenciales
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libc6-dev \
+    libpq-dev \
     && rm -rf /var/lib/apt/lists/*
+
+# Actualiza pip
+RUN pip install --upgrade pip
 
 # Instala las dependencias de Python
 COPY requirements.txt ./
