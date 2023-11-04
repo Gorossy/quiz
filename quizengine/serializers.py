@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from .models import Exam, Question, Choice, UserAnswer, UserExam, UserStatistics
 from django.contrib.auth.models import User
-
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
+from rest_framework import serializers
 class ChoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Choice
@@ -84,12 +86,14 @@ class UserExamSerializer(serializers.ModelSerializer):
 
         return user_exam
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
 
     class Meta:
         model = User
-        fields = ['username', 'password']
+        fields = ['username', 'password', 'access', 'refresh']
         extra_kwargs = {
-            'password': {'write_only': True, 'style': {'input_type': 'password'}}
+            'password': {'write_only': True}
         }
 
     def create(self, validated_data):
@@ -97,4 +101,13 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         user = User(**validated_data)
         user.set_password(password)
         user.save()
-        return user
+
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        return {
+            'username': user.username,
+            'access': access_token,
+            'refresh': str(refresh)
+        }
+
