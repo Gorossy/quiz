@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-(3wx=cu%rleb9&y3c5!3h^s^fi$-z38yjdwjb9zioj-k7yii1!'
-
+CSRF_TRUSTED_ORIGINS = ['https://*.gitpod.io']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
