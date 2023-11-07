@@ -45,6 +45,7 @@ class UserStatisticsView(APIView):
                 {
                     "id": user_exam.exam.id,
                     "exam_title": user_exam.exam.title,
+                    "date": user_exam.completed_at.strftime('%Y-%m-%d %H:%M:%S'),
                     "score": user_exam.score
                 } for user_exam in last_five_exams
             ]
@@ -52,7 +53,7 @@ class UserStatisticsView(APIView):
             return Response({
                 "average_score": user_statistics.average_score,
                 "quizzes_completed": user_statistics.quizzes_completed,
-                "last_five_exams": last_five_exams_data
+                "records": last_five_exams_data
             })
         except UserStatistics.DoesNotExist:
             return Response({"error": "Statistics do not exist for this user."}, status=404)
